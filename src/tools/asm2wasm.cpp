@@ -1,5 +1,5 @@
 /*
- * Copyright 2015 WebAssembly Community Group participants
+* Copyright 2015 WebAssembly Community Group participants
  *
  * Licensed under the Apache License, Version 2.0 (the "License");
  * you may not use this file except in compliance with the License.
@@ -137,8 +137,9 @@ int main(int argc, const char *argv[]) {
   }
 
   const auto &tm_it = options.extra.find("total memory");
-  size_t totalMemory =
-      tm_it == options.extra.end() ? 16 * 1024 * 1024 : atoi(tm_it->second.c_str());
+  long totalMemory =
+      tm_it == options.extra.end() ? 16 * 1024 * 1024 : atol(tm_it->second.c_str());
+  std::cerr << "total memory" << totalMemory << std::endl;
   if (totalMemory & ~Memory::kPageMask) {
     std::cerr << "Error: total memory size " << totalMemory <<
         " is not a multiple of the 64k wasm page size\n";
@@ -197,7 +198,8 @@ int main(int argc, const char *argv[]) {
   // Set the max memory size, if requested
   const auto &memMax = options.extra.find("mem max");
   if (memMax != options.extra.end()) {
-    int max = atoi(memMax->second.c_str());
+    long max = atol(memMax->second.c_str());
+    std::cerr << "setting max " << max << std::endl;
     if (max >= 0) {
       wasm.memory.max = max / Memory::kPageSize;
     } else {
@@ -230,6 +232,7 @@ int main(int argc, const char *argv[]) {
     writer.setSourceMapFilename(sourceMapFilename);
     writer.setSourceMapUrl(sourceMapUrl);
   }
+  std::cerr << "writing wasm with max: " << wasm.memory.max;
   writer.write(wasm, options.extra["output"]);
 
   if (options.debug) std::cerr << "done." << std::endl;

@@ -85,6 +85,7 @@ void WasmBinaryWriter::writeResizableLimits(Address initial, Address maximum,
   uint32_t flags =
       (hasMaximum ? (uint32_t) BinaryConsts::HasMaximum : 0U) |
       (shared ? (uint32_t) BinaryConsts::IsShared : 0U);
+  std::cerr << "== writeMax " << initial << " " << maximum << std::endl;
   o << U32LEB(flags);
   o << U32LEB(initial);
   if (hasMaximum) {
@@ -127,7 +128,7 @@ void WasmBinaryWriter::writeStart() {
 
 void WasmBinaryWriter::writeMemory() {
   if (!wasm->memory.exists || wasm->memory.imported) return;
-  if (debug) std::cerr << "== writeMemory" << std::endl;
+  std::cerr << "== writeMemory" << std::endl;
   auto start = startSection(BinaryConsts::Section::Memory);
   o << U32LEB(1); // Define 1 memory
   writeResizableLimits(wasm->memory.initial, wasm->memory.max,
